@@ -9,12 +9,66 @@ let myData = null;
 
 
 
-// din kode her 
+// din kode her
+const app = document.getElementById('app');
+let detailMode = false; // husker om vi er i detail view
 
+function renderGallery(data) {
+  const dataList = {
+    template: ''
+  };
 
+  data.forEach((element, index) => {
+    dataList.template += `
+      <div class="galleryCard" data-index="${index}">
+        <h2>${element.name}</h2>
+        <img src="${element.picture}" alt="${element.name}">
+        <p>${element.shortDescription}</p>
+      </div>`;
+  });
 
+  app.innerHTML = dataList.template;
 
+  // klik på billede = skift til detail view
+  document.querySelectorAll(".galleryCard img").forEach(img => {
+    img.addEventListener("click", (e) => {
+      const card = e.target.closest(".galleryCard");
+      const index = card.dataset.index;
+      showDetail(data[index]);
+    });
+  });
+}
 
+function showDetail(animal) {
+  if (detailMode) {
+    // hvis vi allerede er i detail, genskab galleriet
+    renderGallery(myData);
+    detailMode = false;
+    return;
+  }
+
+  // ellers vis kun det valgte dyr
+  app.innerHTML = `
+    <div class="detailView">
+      <h2>${animal.name}</h2>
+      <img src="${animal.picture}" alt="${animal.name}">
+      <p>${animal.description}</p>
+    </div>
+  `;
+
+  // klik på billedet = tilbage til galleriet
+  document.querySelector(".detailView img").addEventListener("click", () => {
+    showDetail(animal); // kalder igen for at toggle tilbage
+  });
+
+  detailMode = true;
+}
+
+/* simulerer async hentning */
+setTimeout(() => {
+  myData = fetchData();
+  renderGallery(myData);
+}, myLoadTime);
 
 /*  get data function  DO NOT TOUCH!!!!! ......................................................*/
 
@@ -61,4 +115,4 @@ let myData = null;
    return  myData
 
 }
-
+/*  end of get data function  DO NOT TOUCH!!!!! ......................................................*/
