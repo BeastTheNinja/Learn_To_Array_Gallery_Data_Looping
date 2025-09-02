@@ -11,12 +11,23 @@ let myData = null;
 
 // din kode her
 const app = document.getElementById('app');
-let detailMode = false; // husker om vi er i detail view
+let detailMode = false;
+
+// vis loading først
+function showLoading() {
+  app.innerHTML = `
+    <lottie-player 
+      src="https://assets4.lottiefiles.com/packages/lf20_usmfx6bp.json"  
+      background="transparent"  
+      speed="1"  
+      style="width: 200px; height: 200px; margin: auto;"  
+      loop autoplay>
+    </lottie-player>
+  `;
+}
 
 function renderGallery(data) {
-  const dataList = {
-    template: ''
-  };
+  const dataList = { template: '' };
 
   data.forEach((element, index) => {
     dataList.template += `
@@ -41,13 +52,11 @@ function renderGallery(data) {
 
 function showDetail(animal) {
   if (detailMode) {
-    // hvis vi allerede er i detail, genskab galleriet
     renderGallery(myData);
     detailMode = false;
     return;
   }
 
-  // ellers vis kun det valgte dyr
   app.innerHTML = `
     <div class="detailView">
       <h2>${animal.name}</h2>
@@ -56,20 +65,19 @@ function showDetail(animal) {
     </div>
   `;
 
-  // klik på billedet = tilbage til galleriet
   document.querySelector(".detailView img").addEventListener("click", () => {
-    showDetail(animal); // kalder igen for at toggle tilbage
+    showDetail(animal);
   });
 
   detailMode = true;
 }
 
-/* simulerer async hentning */
+/* simuler hentning */
+showLoading(); // start med at vise loading
 setTimeout(() => {
   myData = fetchData();
   renderGallery(myData);
 }, myLoadTime);
-
 /*  get data function  DO NOT TOUCH!!!!! ......................................................*/
 
  function fetchData() {
